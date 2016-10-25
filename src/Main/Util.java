@@ -4,6 +4,17 @@ import java.util.Random;
 
 public class Util {
 	
+	  private static final char[] symbols;
+
+	  static {
+	    StringBuilder tmp = new StringBuilder();
+	    for (char ch = '0'; ch <= '9'; ++ch)
+	      tmp.append(ch);
+	    for (char ch = 'A'; ch <= 'Z'; ++ch)
+	      tmp.append(ch);
+	    symbols = tmp.toString().toCharArray();
+	  }   
+	
 	public static int randInt(int min, int max) {
 
 	    Random rand = new Random();
@@ -22,4 +33,24 @@ public class Util {
 	    bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
 	    return bd.doubleValue();
 	}
+
+
+
+
+	/*
+
+	  public String RandomString(int length) {
+		  char[] buf;
+		    if (length < 1)
+			      throw new IllegalArgumentException("length < 1: " + length);
+			    return buf = new char[length];
+	  }
+	  
+	  public String nextString() {
+		Random random = new Random();
+	    for (int idx = 0; idx < buf.length; ++idx) 
+	      buf[idx] = symbols[random.nextInt(symbols.length)];
+	    return new String(buf);
+	  }
+	  */
 }

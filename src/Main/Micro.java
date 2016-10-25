@@ -6,6 +6,7 @@ import org.jxmapviewer.viewer.GeoPosition;
 import mapcontrols.SwingWaypoint;
 
 public class Micro {
+	String patente;
 	int id;
 	int id_linea;
 	int estado; //0 ida, 1 vuelta, 2 fuera de recorrido

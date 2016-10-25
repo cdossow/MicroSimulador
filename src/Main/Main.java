@@ -2,7 +2,13 @@ package Main;
 
 
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +27,9 @@ public class Main {
 	
 	static int MicrosPorRuta = 12;
 	static double MicrosMaxSpeed = 0.00016;
-	static double Timer=1; //(segundos)
+	static double Timer=0.1; //(segundos)
+	
+
 	
 	public static void main(String[] args) {
 		KmlReader KmlReader = new KmlReader();
@@ -30,19 +38,53 @@ public class Main {
 		List<Path> MklFiles = new ArrayList<Path>();
 		List<Ruta> Rutas = new ArrayList<Ruta>();
 		List<Linea> Lineas = new ArrayList<Linea>();
+		/*
+		System.out.println("Loading .Kml files");
+		URL url = Main.class.getResource("resource");
 		
-
+		if (url == null) {
+			System.out.println("No folder");
+		     // error - missing folder
+		} else {
+		    File dir=null;
+			try {
+				dir = new File(url.toURI());
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    for (File nextFile : dir.listFiles()) {
+		        // Do something with nextFile
+		    	MklFiles.add(nextFile.toPath());
+		    }
+		}
+		*/
 		
     	try {
-			Files.walk(Paths.get("resurce")).forEach(filePath -> {
+    		System.out.println("Loading .Kml files");
+			Files.walk(Paths.get("src/kml")).forEach(filePath -> {
 			    if (Files.isRegularFile(filePath)) {
 			    	MklFiles.add(filePath);
 			    }
 			});
+
 		} catch (IOException e) {
+			try {
+				Files.walk(Paths.get("kml/")).forEach(filePath -> {
+				    if (Files.isRegularFile(filePath)) {
+				    	MklFiles.add(filePath);
+				    }
+				}
+						);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
+		
+    	
 		int id=0;
     	for (Path files : MklFiles) {
     		System.out.println(files.toString());
@@ -100,11 +142,14 @@ public class Main {
     	
     	Jmap map = new Jmap();
 		int l=1;
+		int idm =0;
     	for (Linea linea : Lineas) {
     		for(int i = 0; i <= MicrosPorRuta; i++){
     			Micro micro = new Micro(0,0,0,0,0,0,0);
     			micro.setSpeed(MicrosMaxSpeed);
     			micro.setMaxSpeed(MicrosMaxSpeed);
+    			micro.id=idm;
+    			micro.patente="Micro"+idm;
     			micro.setEstado(0);
     			micro.setRuta(linea.getRutas().get(0));
     			micro.setTarget(Util.randInt(1, micro.ruta.points.length-2));
@@ -113,13 +158,17 @@ public class Main {
     			micro.waypoint=new SwingWaypoint(l+"A", micro.geoposition);
     			micro.rutaida=linea.getRutas().get(0);
     			micro.rutavuelta=linea.getRutas().get(1);
+    			micro.setId_linea(linea.id);
     			linea.micro.add(micro);
     			map.micropuntos.add(micro.waypoint);
+    			idm = idm +1;
     		}
     		for(int i = 0; i <= MicrosPorRuta; i++){
     			Micro micro = new Micro(0,0,0,0,0,0,0);
     			micro.setSpeed(MicrosMaxSpeed);
     			micro.setMaxSpeed(MicrosMaxSpeed);
+    			micro.id=idm;
+    			micro.patente="Micro"+idm;
     			micro.setEstado(1);
     			micro.setRuta(linea.getRutas().get(1));
     			micro.setTarget(Util.randInt(1, micro.ruta.points.length-2));
@@ -128,16 +177,27 @@ public class Main {
     			micro.waypoint=new SwingWaypoint(l+"A", micro.geoposition);
     			micro.rutaida=linea.getRutas().get(0);
     			micro.rutavuelta=linea.getRutas().get(1);
+    			micro.setId_linea(linea.id);
     			linea.micro.add(micro);
     			map.micropuntos.add(micro.waypoint);
-    			
+    			idm = idm +1;
     		}
     		l=l+1;
     	}
  
-    	map.main(args);
+    	
+    	for (Linea linea : Lineas) {
+    		try {
+				MicroXmlParser.generate(linea);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	
     	
 		
+		map.main(args);
 		while(true){
 	    	for (Linea linea : Lineas) {
 	    		for (Micro  micro : linea.micro) {
@@ -155,6 +215,7 @@ public class Main {
 			Micro micro1=Lineas.get(0).micro.get(0);
 			//System.out.println(micro1.getLat()+"-"+micro1.getLng()+" Target:"+micro1.getTarget());
 		}
+		
 	    /*
     	db=new ImportToDB();
     	
