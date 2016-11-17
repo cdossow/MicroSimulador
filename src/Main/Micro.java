@@ -1,5 +1,7 @@
 package Main;
 import java.lang.Math;
+import java.util.List;
+import java.util.Random;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -20,9 +22,11 @@ public class Micro {
 	public double MaxSpeed;
 	int target;
 	Ruta ruta;
+	int UltimaParada;
 	public SwingWaypoint waypoint;
 	public GeoPosition geoposition;
 	public int desaceleracion;
+	public int Parar;
 	static int DesaceleracionFactor = 10;
 	static int AceleracionFactor = 20;
 	static int DesaceleracionPorTarget = 3;
@@ -171,10 +175,17 @@ public class Micro {
 		this.lat = lat;
 		this.geoposition = new GeoPosition(this.lat, this.lng);
 	}
-	public void update(){
+	public void update(List<Parada> Paradas){
 		
 		
-		if(desaceleracion>0){
+		if(this.Parar>0){
+			Parar=Parar-1;
+			speed = speed - (MaxSpeed / DesaceleracionFactor);
+			if(speed<0){
+				speed=0;
+			}
+		}
+		else if(desaceleracion>0){
 			desaceleracion=desaceleracion-1;
 			speed = speed - (MaxSpeed / DesaceleracionFactor);
 			if(speed<0){
@@ -186,11 +197,23 @@ public class Micro {
 		double tarlat = ruta.getPoints()[target].getLatitude();
 		
 		
-		if(Util.distanciaCoord(lat,lng,tarlat,tarlng)<speed*6&&Util.distanciaCoord(lat,lng,tarlat,tarlng)>=speed*3&&Util.randInt(1, 10)<4){
+		if(Parar<1 &&Util.distanciaCoord(lat,lng,tarlat,tarlng)<speed*6&&Util.distanciaCoord(lat,lng,tarlat,tarlng)>=speed*3&&Util.randInt(1, 10)<4){
 			desaceleracion=desaceleracion+DesaceleracionAnteTarget;
 			if(speed==0)
 				speed = (MaxSpeed / AceleracionFactor);
 		}
+		
+		for(Parada parada: Paradas){
+			if(Util.distanciaCoord(lat,lng,parada.getGeoposition().getLatitude(),parada.getGeoposition().getLongitude())<speed*6){
+				if(parada.id!=this.UltimaParada){
+					Random rnd = new Random();
+					if(rnd.nextDouble()<0.25)
+						Parar=30;
+					UltimaParada=parada.id;
+				}
+			}
+		}
+
 		
 		//double desLng= (Math.abs(lng-ruta.getPoints()[target].getLongitude())/Math.abs(lng-ruta.getPoints()[target].getLongitude()+lat-ruta.getPoints()[target].getLatitude()))*speed;
 		//double desLat= (Math.abs(lat-ruta.getPoints()[target].getLatitude())/Math.abs(lng-ruta.getPoints()[target].getLongitude()+lat-ruta.getPoints()[target].getLatitude()))*speed;

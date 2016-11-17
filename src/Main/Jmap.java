@@ -88,7 +88,9 @@ public class Jmap
 		frame.setLayout(new BorderLayout());
 		frame.add(new JLabel("Use left mouse button to pan, mouse wheel to zoom and right mouse to select"), BorderLayout.NORTH);
 		frame.add(mapViewer);
-		frame.setSize(800, 600);
+		
+		frame.setSize(1300, 700);
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		

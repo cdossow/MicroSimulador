@@ -16,10 +16,25 @@ import java.awt.event.MouseListener;
 public class SwingWaypoint extends DefaultWaypoint {
     private final JButton button;
     private final String text;
+    private final String msg;
 
     public SwingWaypoint(String text, GeoPosition coord) {
         super(coord);
         this.text = text;
+        this.msg = null;
+        button = new JButton(text.substring(text.length()-2, text.length()));
+        button.setSize(25, 20);
+        button.setPreferredSize(new Dimension(30,20));
+        button.addMouseListener(new SwingWaypointMouseListener());
+        button.setVisible(true);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        
+    }
+    
+    public SwingWaypoint(String text, GeoPosition coord, String msg) {
+        super(coord);
+        this.text = text;
+        this.msg = msg;
         button = new JButton(text.substring(text.length()-2, text.length()));
         button.setSize(25, 20);
         button.setPreferredSize(new Dimension(30,20));
@@ -29,6 +44,12 @@ public class SwingWaypoint extends DefaultWaypoint {
         
     }
 
+    public void SetToParada() {
+    	button.setBackground(Color.cyan);
+    	button.setSize(10, 10);
+    }
+
+    
     public JButton getButton() {
         return button;
     }
@@ -37,7 +58,7 @@ public class SwingWaypoint extends DefaultWaypoint {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            JOptionPane.showMessageDialog(button, "Esta micro es de la " + text);
+            JOptionPane.showMessageDialog(button, msg +" " + text);
             
             
         }

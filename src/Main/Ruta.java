@@ -8,6 +8,7 @@ public class Ruta {
 	//double lng[];
 	//double lat[];
 	GeoPoint points[];
+	public char letra;
 	
 
 
@@ -18,6 +19,7 @@ public class Ruta {
 		this.id_linea = id_linea;
 		this.nombre = nombre;
 		this.points = points;
+		this.letra = ' ';
 	}
 
 	

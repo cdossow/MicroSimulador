@@ -25,9 +25,9 @@ import mapcontrols.SwingWaypoint;
 
 public class Main {
 	
-	static int MicrosPorRuta = 12;
-	static double MicrosMaxSpeed = 0.00016;
-	static double Timer=0.1; //(segundos)
+	static int MicrosPorRuta = 10;
+	static double MicrosMaxSpeed = 0.00016; //60 km/h aprox
+	static double Timer=0.2; //(segundos)
 	
 
 	
@@ -38,6 +38,8 @@ public class Main {
 		List<Path> MklFiles = new ArrayList<Path>();
 		List<Ruta> Rutas = new ArrayList<Ruta>();
 		List<Linea> Lineas = new ArrayList<Linea>();
+		List<Parada> Paradas = new ArrayList<Parada>();
+		
 		/*
 		System.out.println("Loading .Kml files");
 		URL url = Main.class.getResource("resource");
@@ -59,6 +61,18 @@ public class Main {
 		    }
 		}
 		*/
+		
+		System.out.println("Loading paradas.kml file");
+		GeoPoint paradas[]=KmlReader.parseKml2("paradas/paradas.kml");
+		
+		for(int i = 0; i < paradas.length;i++){
+			GeoPosition geoposition = new GeoPosition(paradas[i].latitude, paradas[i].longitude);
+			Parada parada = new Parada(i,"Parada"+i,geoposition);
+			parada.waypoint=new SwingWaypoint("P"+parada.getId(),parada.getGeoposition(),"Esta parada es la");
+			Paradas.add(parada);
+			
+			//System.out.println(paradas[i].latitude+"-"+paradas[i].longitude);
+		}
 		
     	try {
     		System.out.println("Loading .Kml files");
@@ -95,6 +109,8 @@ public class Main {
     	    id++;
     	}
     	
+    	
+    	
     	Linea linea1 = new Linea(0,"Linea1","50.000.001-1");
     	Linea linea2 = new Linea(1,"Linea2","50.000.002-1");
     	Linea linea3 = new Linea(2,"Linea3","50.000.003-1");
@@ -107,26 +123,47 @@ public class Main {
     	Linea linea10 = new Linea(9,"Linea10","50.000.010-1");
     	
     	for (Ruta ruta : Rutas) {
-    	if(ruta.nombre.contains("Bus 1 "))
-    		linea1.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 2 "))
-    		linea2.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 3 "))
-    		linea3.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 4 "))
-    		linea4.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 5 "))
-    		linea5.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 6 "))
-    		linea6.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 7 "))
-    		linea7.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 8 "))
-    		linea8.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 9 "))
-    		linea9.rutas.add(ruta);
-    	if(ruta.nombre.contains("Bus 10 "))
-    		linea10.rutas.add(ruta);
+    	if(ruta.nombre.contains("Bus 1 ")){
+    		char letra = (char) (65 + (linea1.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea1.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 2 ")){
+    		char letra = (char) (65 + (linea2.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea2.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 3 ")){
+    		char letra = (char) (65 + (linea3.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea3.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 4 ")){
+    		char letra = (char) (65 + (linea4.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea4.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 5 ")){
+    		char letra = (char) (65 + (linea5.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea5.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 6 ")){
+    		char letra = (char) (65 + (linea6.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea6.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 7 ")){
+    		char letra = (char) (65 + (linea7.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea7.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 8 ")){
+    		char letra = (char) (65 + (linea8.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea8.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 9 ")){
+    		char letra = (char) (65 + (linea9.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea9.rutas.add(ruta);}
+    	if(ruta.nombre.contains("Bus 10 ")){
+    		char letra = (char) (65 + (linea10.rutas.size()/2));
+    		ruta.letra=letra;
+    		linea10.rutas.add(ruta);}
+    	//System.out.println(ruta.letra);
     	}
     	
     	Lineas.add(linea1);
@@ -140,80 +177,65 @@ public class Main {
     	Lineas.add(linea9);
     	Lineas.add(linea10);
     	
+    	
     	Jmap map = new Jmap();
 		int l=1;
 		int idm =0;
+		
+		for (Parada  parada : Paradas) {
+			parada.waypoint.SetToParada();
+			map.micropuntos.add(parada.waypoint);
+		}
+
     	for (Linea linea : Lineas) {
-    		for(int i = 0; i <= MicrosPorRuta; i++){
-    			Micro micro = new Micro(0,0,0,0,0,0,0);
-    			micro.setSpeed(MicrosMaxSpeed);
-    			micro.setMaxSpeed(MicrosMaxSpeed);
-    			micro.id=idm;
-    			micro.patente="Micro"+idm;
-    			micro.setEstado(0);
-    			micro.setRuta(linea.getRutas().get(0));
-    			micro.setTarget(Util.randInt(1, micro.ruta.points.length-2));
-    			micro.setLat(micro.getRuta().getPoints()[micro.getTarget()-1].getLatitude());
-    			micro.setLng(micro.getRuta().getPoints()[micro.getTarget()-1].getLongitude());
-    			micro.waypoint=new SwingWaypoint(l+"A", micro.geoposition);
-    			micro.rutaida=linea.getRutas().get(0);
-    			micro.rutavuelta=linea.getRutas().get(1);
-    			micro.setId_linea(linea.id);
-    			linea.micro.add(micro);
-    			map.micropuntos.add(micro.waypoint);
-    			idm = idm +1;
+    		for(Ruta ruta : linea.rutas){
+    			for(int i=0;i<MicrosPorRuta;i++){
+        			PoblarLinea(linea,ruta,map,idm,Rutas);
+        			idm = idm +1;
+    			}
     		}
-    		for(int i = 0; i <= MicrosPorRuta; i++){
-    			Micro micro = new Micro(0,0,0,0,0,0,0);
-    			micro.setSpeed(MicrosMaxSpeed);
-    			micro.setMaxSpeed(MicrosMaxSpeed);
-    			micro.id=idm;
-    			micro.patente="Micro"+idm;
-    			micro.setEstado(1);
-    			micro.setRuta(linea.getRutas().get(1));
-    			micro.setTarget(Util.randInt(1, micro.ruta.points.length-2));
-    			micro.setLat(micro.getRuta().getPoints()[micro.getTarget()-1].getLatitude());
-    			micro.setLng(micro.getRuta().getPoints()[micro.getTarget()-1].getLongitude());
-    			micro.waypoint=new SwingWaypoint(l+"A", micro.geoposition);
-    			micro.rutaida=linea.getRutas().get(0);
-    			micro.rutavuelta=linea.getRutas().get(1);
-    			micro.setId_linea(linea.id);
-    			linea.micro.add(micro);
-    			map.micropuntos.add(micro.waypoint);
-    			idm = idm +1;
-    		}
-    		l=l+1;
     	}
  
-    	
-    	for (Linea linea : Lineas) {
-    		try {
-				MicroXmlParser.generate(linea);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
-    	
-    	
-		
 		map.main(args);
+		
+
+		
 		while(true){
+			long startTime = System.currentTimeMillis();
 	    	for (Linea linea : Lineas) {
 	    		for (Micro  micro : linea.micro) {
-	    			micro.update();
+	    			micro.update(Paradas);
 	    			//System.out.println(micro1.getLat()+"-"+micro1.getLng()+" Target:"+micro1.getTarget());
 	    		}
 	    	}
 			map.refresh();
+			
+	    	for (Linea linea : Lineas) {
+	    		try {
+					MicroXmlParser.generate(linea);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	}
+			long stopTime = System.currentTimeMillis();
+		    long elapsedTime = stopTime - startTime;
+		    //System.out.println(elapsedTime);
 			try {
-				Thread.sleep((long)(Timer*1000));
+				long time =(long)((Timer*1000)-elapsedTime);
+				if(time <0)
+					time =0;
+				Thread.sleep(time);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Micro micro1=Lineas.get(0).micro.get(0);
 			//System.out.println(micro1.getLat()+"-"+micro1.getLng()+" Target:"+micro1.getTarget());
+			stopTime = System.currentTimeMillis();
+		    elapsedTime = stopTime - startTime;
+		    //System.out.println(elapsedTime);
+
 		}
 		
 	    /*
@@ -227,5 +249,34 @@ public class Main {
 		}
 		
 		*/
+	}
+	static void PoblarLinea(Linea linea, Ruta ruta,Jmap map, int idm, List<Ruta> Rutas){
+		
+		Micro micro = new Micro(0,0,0,0,0,0,0);
+		micro.setSpeed(MicrosMaxSpeed);
+		micro.setMaxSpeed(MicrosMaxSpeed);
+		micro.id=idm;
+		micro.patente="Micro"+idm;
+		micro.setEstado(1);
+		micro.setRuta(ruta);
+		micro.setTarget(Util.randInt(1, micro.ruta.points.length-2));
+		micro.setLat(micro.getRuta().getPoints()[micro.getTarget()-1].getLatitude());
+		micro.setLng(micro.getRuta().getPoints()[micro.getTarget()-1].getLongitude());
+		micro.waypoint=new SwingWaypoint(linea.id+1+""+ruta.letra, micro.geoposition,"Esta micro es de la");
+		micro.setId_linea(linea.id);
+		linea.micro.add(micro);
+		map.micropuntos.add(micro.waypoint);
+		idm = idm +1;
+		
+	    if(ruta.id%2==0){
+	    	micro.rutaida=ruta;
+	    	micro.rutavuelta=Rutas.get(ruta.id+1);
+	    	//System.out.println("ida-"+ruta.id+"-"+linea.id);
+	    }else{
+	    	micro.rutaida=Rutas.get(ruta.id-1);
+	    	micro.rutavuelta=ruta;
+	    	//System.out.println("vuelta-"+ruta.id+"-"+linea.id);
+	    }
+		
 	}
 }

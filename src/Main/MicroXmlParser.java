@@ -66,7 +66,7 @@ public class MicroXmlParser {
         
     	
     	for (Ruta ruta : linea.getRutas()){
-    	Element itemRUTA = document.createElement("RUTA"); 
+    	//Element itemRUTA = document.createElement("RUTA"); 
             
             for(Micro micro : linea.micro){
             	if(micro.ruta.id==ruta.id){
@@ -103,11 +103,12 @@ public class MicroXmlParser {
                     itemNode.appendChild(lateNode);
                     itemNode.appendChild(lngNode);
                     itemNode.appendChild(idLineaNode);
-                    itemRUTA.appendChild(itemNode);
+                    itemLINEA.appendChild(itemNode);
             	}
             }
-            itemLINEA.appendChild(itemRUTA);
-        }
+            //itemLINEA.appendChild(itemRUTA);
+    	}
+
     	//append itemNode to raiz
     	raiz.appendChild(itemLINEA); //pegamos el elemento a la raiz "Documento"
         //Generate XML
